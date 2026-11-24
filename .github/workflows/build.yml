@@ -1,0 +1,24 @@
+name: Build EC AIR - macOS Only
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    name: macOS - VST3 + AU
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+      - name: Upload VST3 + AU
+        uses: actions/upload-artifact@v4
+        with:
+          name: EC-AIR-macOS-VST3-AU
+          path: build/EC_AIR_artefacts/Release/
+          if-no-files-found: warn
